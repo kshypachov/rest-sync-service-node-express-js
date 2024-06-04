@@ -1,21 +1,23 @@
-const express = require('express') // Import Express module
-const router = express.Router() // Create router instance
-const personController = require('../controllers/personController') // Import personController to handle person-related operations
+const express = require('express') // Імпортуємо модуль Express
+const router = express.Router() // Створюємо екземпляр маршрутизатора
+const personController = require('../controllers/personController') // Імпортуємо контролер для обробки операцій, пов'язаних з особами
 const {
 	createPersonValidation
-} = require('../middleware/requestPersonValidation') // Request validation middleware: Imported for request validation using Express Validator.
-const { validationResult } = require('express-validator') // validationResult: Required to handle validation results.
-const logger = require('../middleware/logger') // Import your Winston logger
+} = require('../middleware/requestPersonValidation') // Middleware для валідації запитів: Імпортуємо для валідації запитів за допомогою Express Validator
+const { validationResult } = require('express-validator') // Імпортуємо validationResult для обробки результатів валідації
+const logger = require('../middleware/logger') // Імпортуємо логер Winston
 
-//  HTTP req level logging middleware
+// Цей файл маршрутизатора ефективно обробляє CRUD операції для осіб, делегує операції відповідним функціям контролера та виконує валідацію запитів за допомогою middleware.
+
+// Middleware для логування HTTP запитів
 router.use((req, res, next) => {
-	logger.info(`[${req.method} ${req.url}]`)
-	logger.debug(`Headers: ${JSON.stringify(req.headers)}`)
-	logger.debug(`Body: ${JSON.stringify(req.body)}`)
-	next()
+	logger.info(`[${req.method} ${req.url}]`) // Логування методу та URL запиту
+	logger.debug(`Headers: ${JSON.stringify(req.headers)}`) // Логування заголовків запиту
+	logger.debug(`Body: ${JSON.stringify(req.body)}`) // Логування тіла запиту
+	next() // Передача управління наступному middleware
 })
 
-// Response logging middleware
+// Middleware для логування відповідей
 router.use((req, res, next) => {
 	const oldWrite = res.write
 	const oldEnd = res.end
@@ -40,91 +42,92 @@ router.use((req, res, next) => {
 		oldEnd.apply(res, restArgs)
 	}
 
-	next()
+	next() // Передача управління наступному middleware
 })
 
+// Маршрут для створення нової особи
 router.post(
-	'/person',
-	createPersonValidation,
+	'/',
+	createPersonValidation, // Використання middleware для валідації запиту
 	(req, res, next) => {
-    // #swagger.summary = 'create Person'
-    // #swagger.tags = ['Person Service']
-    // #swagger.description = 'Route to create a new person. It uses request validation middleware (createPersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.'
-		logger.info('Creating person attempt')
+		// #swagger.summary = 'create Person'
+		// #swagger.tags = ['Person Service']
+		// #swagger.description = 'Route to create a new person. It uses request validation middleware (createPersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.'
+		logger.info('Creating person attempt') // Логування спроби створення особи
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			logger.warn(`Validation error: ${JSON.stringify(errors.array())}`)
-			return res.status(422).json({ Validation_errors: errors.array() })
+			return res.status(422).json({ Validation_errors: errors.array() }) // Повернення помилок валідації
 		}
-		next()
+		next() // Передача управління наступному middleware
 	},
-	personController.createPerson
+	personController.createPerson // Виклик функції контролера для створення особи
 )
 
+// Маршрут для отримання списку осіб за запитами
 router.get(
-	'/person',
+	'/',
 	(req, res, next) => {
-        // #swagger.summary = 'get Persons By Query Parameters'
-    // #swagger.tags = ['Person Service']
-    // #swagger.description = 'Route to get a list of persons by query parameters.Example '/person?_page=1&_limit=50&name=Adam' Delegates the operation to the getPersonsByQueryParameters controller function.'
-		logger.info('Getting list of persons by query parameters')
-		next()
+		// #swagger.summary = 'get Persons By Query Parameters'
+		// #swagger.tags = ['Person Service']
+		// #swagger.description = 'Route to get a list of persons by query parameters.Example '/person?_page=1&_limit=50&name=Adam' Delegates the operation to the getPersonsByQueryParameters controller function.'
+		logger.info('Getting list of persons by query parameters') // Логування спроби отримання списку осіб за запитами
+		next() // Передача управління наступному middleware
 	},
-	personController.getPersonsByQueryParameters
+	personController.getPersonsByQueryParameters // Виклик функції контролера для отримання списку осіб за запитами
 )
 
+// Маршрут для отримання особи за унікальним атрибутом
 router.get(
-	'/person/:attribute/:value',
+	'/:attribute/:value',
 	(req, res, next) => {
-        // #swagger.summary = 'get Person By Unique Attribute'
-    // #swagger.tags = ['Person Service']
-    // #swagger.description = 'Route to get a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the getPersonByUniqueAttribute controller function.'
-		logger.info(`Getting person by ${req.params.attribute} ${req.params.value}`)
-		next()
+		// #swagger.summary = 'get Person By Unique Attribute'
+		// #swagger.tags = ['Person Service']
+		// #swagger.description = 'Route to get a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the getPersonByUniqueAttribute controller function.'
+		logger.info(`Getting person by ${req.params.attribute} ${req.params.value}`) // Логування спроби отримання особи за унікальним атрибутом
+		next() // Передача управління наступному middleware
 	},
-	personController.getPersonByUniqueAttribute
+	personController.getPersonByUniqueAttribute // Виклик функції контролера для отримання особи за унікальним атрибутом
 )
 
-
+// Маршрут для оновлення особи за унікальним атрибутом
 router.put(
-	'/person/:attribute/:value',
-	createPersonValidation,
+	'/:attribute/:value',
+	createPersonValidation, // Використання middleware для валідації запиту
 	(req, res, next) => {
-        // #swagger.summary = 'update Person By Unique Attribute'
-    // #swagger.tags = ['Person Service']
-    // #swagger.description = 'Route to update a person by unique attribute like unzr,rnokpp,passportNumber or id. It also uses request validation middleware (updatePersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the updatePersonByUniqueAttribute controller function.'
-		logger.info('Updating person attempt')
+		// #swagger.summary = 'update Person By Unique Attribute'
+		// #swagger.tags = ['Person Service']
+		// #swagger.description = 'Route to update a person by unique attribute like unzr,rnokpp,passportNumber or id. It also uses request validation middleware (updatePersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the updatePersonByUniqueAttribute controller function.'
+		logger.info('Updating person attempt') // Логування спроби оновлення особи
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			logger.warn(`Validation error: ${JSON.stringify(errors.array())}`)
-			return res.status(422).json({ Validation_errors: errors.array() })
+			return res.status(422).json({ Validation_errors: errors.array() }) // Повернення помилок валідації
 		}
-		next()
+		next() // Передача управління наступному middleware
 	},
 	(req, res, next) => {
 		logger.info(
-			`Updating person by ${req.params.attribute} ${req.params.value}`
+			`Updating person by ${req.params.attribute} ${req.params.value}` // Логування оновлення особи за унікальним атрибутом
 		)
-		next()
+		next() // Передача управління наступному middleware
 	},
-	personController.updatePersonByUniqueAttribute
+	personController.updatePersonByUniqueAttribute // Виклик функції контролера для оновлення особи за унікальним атрибутом
 )
-
-
+// Маршрут для видалення особи за унікальним атрибутом
 router.delete(
-	'/person/:attribute/:value',
+	'/:attribute/:value',
 	(req, res, next) => {
-        // #swagger.summary = 'delete Person By Unique Attribute'
-    // #swagger.tags = ['Person Service']
-    // #swagger.description = 'Route to delete a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the deletePersonByUniqueAttribute controller function.'
+		// #swagger.summary = 'delete Person By Unique Attribute'
+		// #swagger.tags = ['Person Service']
+		// #swagger.description = 'Route to delete a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the deletePersonByUniqueAttribute controller function.'
 		logger.info(
-			`Deleting person by ${req.params.attribute} ${req.params.value}`
+			`Deleting person by ${req.params.attribute} ${req.params.value}` // Логування спроби видалення особи за унікальним атрибутом
 		)
-		next()
+		next() // Передача управління наступному middleware
 	},
-	personController.deletePersonByUniqueAttribute
+	personController.deletePersonByUniqueAttribute // Виклик функції контролера для видалення особи за унікальним атрибутом
 )
 
-module.exports = router // Export the router to make it available for use in other files
+module.exports = router // Експортуємо маршрутизатор для використання в інших файлах
 
-//This router file efficiently handles CRUD operations for persons, delegates the operations to the appropriate controller functions, and performs request validation using middleware.

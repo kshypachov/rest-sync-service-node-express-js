@@ -11,7 +11,7 @@
     "http"
   ],
   "paths": {
-    "/person/": {
+    "/person": {
       "post": {
         "tags": [
           "Person Service"
@@ -186,46 +186,6 @@
             "name": "value",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "surname",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "patronym",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "dateOfBirth",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "rnokpp",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "unzr",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "passportNumber",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "gender",
-            "in": "query",
             "type": "string"
           }
         ],

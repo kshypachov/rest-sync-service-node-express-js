@@ -1,26 +1,26 @@
-const dotenv = require('dotenv'); // Import dotenv for environment 
-dotenv.config(); // Load environment variables from .env file
+const dotenv = require('dotenv') // Імпортуємо dotenv для роботи зі змінними середовища
+dotenv.config() // Завантажуємо змінні середовища з файлу .env
 
-module.exports={
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: 'mysql'
-  },
-  test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: 'mysql'
-  },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: 'mysql'
-  }
+module.exports = {
+	development: {
+		username: process.env.DB_USER, // Ім'я користувача для підключення до бази даних, зчитане зі змінної середовища
+		password: process.env.DB_PASSWORD, // Пароль для підключення до бази даних, зчитаний зі змінної середовища
+		database: process.env.DB_NAME, // Назва бази даних, зчитана зі змінної середовища
+		host: process.env.DB_HOST, // Хост для підключення до бази даних, зчитаний зі змінної середовища
+		dialect: 'mysql' // Використовуваний діалект бази даних (MySQL)
+	},
+	test: {
+		username: process.env.DB_USER, // Ім'я користувача для підключення до тестової бази даних, зчитане зі змінної середовища
+		password: process.env.DB_PASSWORD, // Пароль для підключення до тестової бази даних, зчитаний зі змінної середовища
+		database: process.env.DB_NAME, // Назва тестової бази даних, зчитана зі змінної середовища
+		host: process.env.DB_HOST, // Хост для підключення до тестової бази даних, зчитаний зі змінної середовища
+		dialect: 'mysql' // Використовуваний діалект бази даних (MySQL)
+	},
+	production: {
+		username: process.env.DB_USER, // Ім'я користувача для підключення до продуктивної бази даних, зчитане зі змінної середовища
+		password: process.env.DB_PASSWORD, // Пароль для підключення до продуктивної бази даних, зчитаний зі змінної середовища
+		database: process.env.DB_NAME, // Назва продуктивної бази даних, зчитана зі змінної середовища
+		host: process.env.DB_HOST, // Хост для підключення до продуктивної бази даних, зчитаний зі змінної середовища
+		dialect: 'mysql' // Використовуваний діалект бази даних (MySQL)
+	}
 }

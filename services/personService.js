@@ -1,19 +1,19 @@
-const logger = require('../middleware/logger') // logger: Imported for logging using Winston.
-const models = require('../models/index') // models: Imported to access Sequelize models for interacting with the database.
+const logger = require('../middleware/logger') // Логер: Імпортується для логування за допомогою Winston.
+const models = require('../models/index') // Моделі: Імпортуються для доступу до моделей Sequelize для взаємодії з базою даних.
 
-// Creates a new person record in the database using the Person model. It receives person data as parameters and inserts it into the database using Sequelize's create() method.
-// In Sequelize, when you call the create() method on a model (in this case, the Person model), Sequelize generates and executes an SQL INSERT query to insert a new record into the corresponding database table.
+// У Sequelize, коли ви викликаєте метод create() для моделі (у цьому випадку, моделі Person), Sequelize генерує та виконує запит SQL INSERT, щоб вставити новий запис у відповідну таблицю бази даних.
+// Створює новий запис особи в базі даних за допомогою моделі Person. Отримує дані особи як параметри та вставляє їх у базу даних за допомогою методу create() Sequelize.
 exports.createPerson = async personData => {
 	try {
 		const newPerson = await models.Person.create(personData)
 		logger.info(`Created person: ${JSON.stringify(newPerson)}`)
 		return newPerson
 	} catch (error) {
-		// handling for SequelizeUniqueConstraintError, which is a type of error thrown by Sequelize when a unique constraint in your database is violated.
+		// Обробка для SequelizeUniqueConstraintError, який є типом помилки, що виникає, коли унікальне обмеження в базі даних порушується.
 		if (error.name === 'SequelizeUniqueConstraintError') {
 			const errorMessage = error.errors.map(err => err.message).join('; ')
 			logger.error(`DB Error creating person: ${errorMessage}`)
-			throw new Error(errorMessage) // Throw the unique constraint violation error message
+			throw new Error(errorMessage) // Викидає повідомлення про порушення унікального обмеження
 		} else {
 			logger.error(`Error creating person: ${error}`)
 			throw new Error('Failed to create person')
@@ -21,7 +21,7 @@ exports.createPerson = async personData => {
 	}
 }
 
-// Retrieves persons from the database based on query parameters. It constructs a Sequelize query using the provided parameters and returns the matching persons.
+// Отримує осіб з бази даних на основі параметрів запиту. Створює запит Sequelize за допомогою наданих параметрів і повертає відповідних осіб.
 exports.getPersonsByQueryParameters = async (
 	queryParameters,
 	offset,
@@ -44,7 +44,7 @@ exports.getPersonsByQueryParameters = async (
 		throw new Error('Failed to get persons')
 	}
 }
-
+// Отримує кількість осіб в базі даних на основі параметрів запиту.
 exports.getPersonsByQueryParametersCount = async queryParameters => {
 	try {
 		const totalCount = await models.Person.count({ where: queryParameters })
@@ -58,7 +58,7 @@ exports.getPersonsByQueryParametersCount = async queryParameters => {
 	}
 }
 
-// Retrieves a single person from the database based on a unique attribute (e.g., ID, email). It constructs a where clause based on the attribute and value and queries the database to find the person.
+// Отримує одну особу з бази даних на основі унікального атрибуту (наприклад, ID, unzr, rnokpp, passportNumber). Створює where clause на основі атрибуту та значення і виконує запит до бази даних для пошуку особи.
 exports.getPersonByUniqueAttribute = async (attribute, value) => {
 	try {
 		const person = await models.Person.findOne({
@@ -79,11 +79,31 @@ exports.getPersonByUniqueAttribute = async (attribute, value) => {
 	}
 }
 
-// Updates a person in the database based on a unique attribute. It constructs a where clause based on the attribute and value, updates the person's data with the provided newData, and returns the updated person.
-exports.updatePersonByUniqueAttribute = async (attribute, value, newData) => {
+// Оновлює особу в базі даних на основі унікального атрибуту. Створює where clause на основі атрибуту та значення, оновлює дані особи наданими новими даними і повертає оновлену особу.
+exports.updatePersonByUniqueAttribute = async (
+	attribute,
+	value,
+	name,
+	surname,
+	patronym,
+	dateOfBirth,
+	rnokpp,
+	unzr,
+	passportNumber,
+	gender
+) => {
 	try {
 		const [updatedRowsCount, updatedPersons] = await models.Person.update(
-			newData,
+			{
+				name,
+				surname,
+				patronym,
+				dateOfBirth,
+				rnokpp,
+				unzr,
+				passportNumber,
+				gender
+			},
 			{ where: { [attribute]: value }, returning: true }
 		)
 		if (updatedRowsCount === 0) {
@@ -94,7 +114,7 @@ exports.updatePersonByUniqueAttribute = async (attribute, value, newData) => {
 		if (error.name === 'SequelizeUniqueConstraintError') {
 			const errorMessage = error.errors.map(err => err.message).join('; ')
 			logger.error(`DB Error updating person: ${errorMessage}`)
-			throw new Error(errorMessage) // Throw the unique constraint violation error message
+			throw new Error(errorMessage) // Викидає повідомлення про порушення унікального обмеження
 		} else {
 			logger.error(`Error updating person by unique attribute: ${error}`)
 			throw new Error(error.message)
@@ -102,7 +122,7 @@ exports.updatePersonByUniqueAttribute = async (attribute, value, newData) => {
 	}
 }
 
-// FDeletes a person from the database based on a unique attribute. It constructs a where clause based on the attribute and value and deletes the matching person from the database.
+// Видаляє особу з бази даних на основі унікального атрибуту. Створює where clause на основі атрибуту та значення і видаляє відповідну особу з бази даних.
 exports.deletePersonByUniqueAttribute = async (attribute, value) => {
 	try {
 		const deletedRowsCount = await models.Person.destroy({
@@ -114,13 +134,13 @@ exports.deletePersonByUniqueAttribute = async (attribute, value) => {
 		logger.info(`Deleted person by unique attribute (${attribute}): ${value}`)
 		return {
 			message: `Person with ${attribute} = ${value} was deleted successfully.`
-		} // Success response
+		} // Відповідь про успіх
 	} catch (error) {
 		logger.error(`Error deleting person by unique attribute: ${error.message}`)
 		throw new Error(error.message)
 	}
 }
 
-// Each service function wraps its database operations in a try-catch block to catch any potential errors. If an error occurs, it logs the error message and throws the error to be handled by the caller.
+// Кожна функція сервісу обгортає свої операції з базою даних у блок try-catch для перехоплення можливих помилок. Якщо виникає помилка, вона логує повідомлення про помилку і викидає помилку для обробки викликачем.
 
-// personService.js file effectively encapsulates the business logic for handling CRUD operations on persons, interacts with the database using Sequelize models, and performs error handling.
+// Файл personService.js ефективно інкапсулює бізнес-логіку для обробки CRUD операцій з особами, взаємодіє з базою даних за допомогою моделей Sequelize і виконує обробку помилок.

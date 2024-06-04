@@ -1,13 +1,11 @@
 // personController.js
 
-const { log } = require('winston')
-const logger = require('../middleware/logger') // Import logger for logging using Winston
-const personService = require('../services/personService') // Import personService to handle CRUD operations on persons
+const logger = require('../middleware/logger') // Імпортуємо логер для логування за допомогою Winston
+const personService = require('../services/personService') // Імпортуємо personService для обробки CRUD операцій з особами
 
-// Controller Functions:
-
-// Handles creating a new person. Delegates creation operation to personService.createPerson().
-// Returns the newly created person with a status code of 201 if successful, or logs and returns an error response with status code 500 if an error occurs.
+// Функції контролера:
+// Обробляє створення нової особи. Делегує операцію створення функції personService.createPerson().
+// Повертає новостворену особу зі статусом 201, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.createPerson = async (req, res) => {
 	try {
 		const {
@@ -33,12 +31,12 @@ exports.createPerson = async (req, res) => {
 		res.status(201).json(newPerson)
 	} catch (error) {
 		logger.error(`Controller Error creating person: ${error.message}`)
-		res.status(500).json({ error: error.message }) // Send the actual error message to the client
+		res.status(500).json({ error: error.message }) // Відправлення фактичного повідомлення про помилку клієнту
 	}
 }
 
-// Handles getting persons by query parameters. Delegates operation to personService.getPersonsByQueryParameters().
-// Returns the list of persons with a status code of 200 if successful, or logs and returns an error response with status code 500 if an error occurs.
+// Обробляє отримання осіб за параметрами запиту. Делегує операцію функції personService.getPersonsByQueryParameters().
+// Повертає список осіб зі статусом 200, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.getPersonsByQueryParameters = async (req, res) => {
 	try {
 		const {
@@ -91,9 +89,9 @@ exports.getPersonsByQueryParameters = async (req, res) => {
 	}
 }
 
-// Handles getting a person by unique attribute. Delegates operation to personService.getPersonByUniqueAttribute().
-// Returns the found person with a status code of 200 if successful, or a 'Person not found' response with status code 404 if the person does not exist,
-// or logs and returns an error response with status code 500 if an error occurs.
+// Обробляє отримання особи за унікальним атрибутом. Делегує операцію функції personService.getPersonByUniqueAttribute().
+// Повертає знайдену особу зі статусом 200, якщо успішно, або відповідь 'Person not found' зі статусом 404, якщо особа не існує,
+// або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.getPersonByUniqueAttribute = async (req, res) => {
 	try {
 		const { attribute, value } = req.params
@@ -111,15 +109,32 @@ exports.getPersonByUniqueAttribute = async (req, res) => {
 	}
 }
 
-// Handles updating a person by unique attribute. Delegates operation to personService.updatePersonByUniqueAttribute().
-// Returns the updated person with a status code of 200 if successful, or logs and returns an error response with status code 500 if an error occurs.
+// Обробляє оновлення особи за унікальним атрибутом. Делегує операцію функції personService.updatePersonByUniqueAttribute().
+// Повертає оновлену особу зі статусом 200, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.updatePersonByUniqueAttribute = async (req, res) => {
 	try {
 		const { attribute, value } = req.params
+		const {
+			name,
+			surname,
+			patronym,
+			dateOfBirth,
+			rnokpp,
+			unzr,
+			passportNumber,
+			gender
+		} = req.query
 		await personService.updatePersonByUniqueAttribute(
 			attribute,
 			value,
-			req.body
+			name,
+			surname,
+			patronym,
+			dateOfBirth,
+			rnokpp,
+			unzr,
+			passportNumber,
+			gender
 		)
 		res.status(200).json('Person updated')
 	} catch (error) {
@@ -128,8 +143,8 @@ exports.updatePersonByUniqueAttribute = async (req, res) => {
 	}
 }
 
-// Handles deleting a person by unique attribute. Delegates operation to personService.deletePersonByUniqueAttribute().
-// Returns a success response with status code 204 if successful, or logs and returns an error response with status code 500 if an error occurs.
+// Обробляє видалення особи за унікальним атрибутом. Делегує операцію функції personService.deletePersonByUniqueAttribute().
+// Повертає відповідь успіху зі статусом 204, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.deletePersonByUniqueAttribute = async (req, res) => {
 	try {
 		const { attribute, value } = req.params
@@ -137,7 +152,7 @@ exports.deletePersonByUniqueAttribute = async (req, res) => {
 			attribute,
 			value
 		)
-		res.status(200).json(result) // Respond with the success message
+		res.status(204).json(result) 
 	} catch (error) {
 		if (error.message === 'Person not found') {
 			res.status(404).json({ error: error.message })
@@ -149,6 +164,6 @@ exports.deletePersonByUniqueAttribute = async (req, res) => {
 		}
 	}
 }
-//Error handling is implemented using try-catch blocks to catch any potential errors that may occur during database operations. Errors are logged using the logger and appropriate error responses are sent back to the client.
+//Обробка помилок реалізована за допомогою блоків try-catch для перехоплення можливих помилок, які можуть виникнути під час операцій з базою даних. Помилки логуються за допомогою логера, а відповідні відповіді з помилками надсилаються клієнту.
 
-// personController.js file efficiently handles CRUD operations for persons, delegates the operations to the personService, and performs error handling using try-catch blocks. It follows a clean and organized structure, which is good for maintainability.
+// Файл personController.js ефективно обробляє CRUD операції для осіб, делегує операції сервісу personService і виконує обробку помилок за допомогою блоків try-catch. Він має чисту та організовану структуру, що добре для підтримуваності.
