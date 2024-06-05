@@ -57,6 +57,7 @@ router.post(
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
 			logger.warn(`Validation error: ${JSON.stringify(errors.array())}`)
+			// 422 дає більш точний опис проблеми як помилки валідації семантичних даних, тоді як 400 є загальним кодом для будь-яких помилок у запиті.
 			return res.status(422).json({ Validation_errors: errors.array() }) // Повернення помилок валідації
 		}
 		next() // Передача управління наступному middleware
@@ -130,4 +131,3 @@ router.delete(
 )
 
 module.exports = router // Експортуємо маршрутизатор для використання в інших файлах
-

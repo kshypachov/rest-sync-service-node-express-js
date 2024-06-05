@@ -6,18 +6,9 @@ const models = require('../models/index') // Моделі: Імпортують�
 exports.createPerson = async personData => {
 	try {
 		const newPerson = await models.Person.create(personData)
-		logger.info(`Created person: ${JSON.stringify(newPerson)}`)
 		return newPerson
 	} catch (error) {
-		// Обробка для SequelizeUniqueConstraintError, який є типом помилки, що виникає, коли унікальне обмеження в базі даних порушується.
-		if (error.name === 'SequelizeUniqueConstraintError') {
-			const errorMessage = error.errors.map(err => err.message).join('; ')
-			logger.error(`DB Error creating person: ${errorMessage}`)
-			throw new Error(errorMessage) // Викидає повідомлення про порушення унікального обмеження
-		} else {
-			logger.error(`Error creating person: ${error}`)
-			throw new Error('Failed to create person')
-		}
+		throw error
 	}
 }
 
@@ -33,28 +24,18 @@ exports.getPersonsByQueryParameters = async (
 			offset,
 			limit
 		})
-		logger.info(
-			`Retrieved ${
-				persons.length
-			} persons by query parameters: ${JSON.stringify(queryParameters)}`
-		)
 		return persons
 	} catch (error) {
-		logger.error(`Error getting persons by query parameters: ${error.message}`)
-		throw new Error('Failed to get persons')
+		throw error
 	}
 }
 // Отримує кількість осіб в базі даних на основі параметрів запиту.
 exports.getPersonsByQueryParametersCount = async queryParameters => {
 	try {
 		const totalCount = await models.Person.count({ where: queryParameters })
-		logger.info(`Total count of persons by query parameters: ${totalCount}`)
 		return totalCount
 	} catch (error) {
-		logger.error(
-			`Error getting persons by query parameters count: ${error.message}`
-		)
-		throw new Error('Failed to get persons count')
+		throw new Error(`Error getting persons count: ${error.message}`)
 	}
 }
 
@@ -64,18 +45,9 @@ exports.getPersonByUniqueAttribute = async (attribute, value) => {
 		const person = await models.Person.findOne({
 			where: { [attribute]: value }
 		})
-		if (!person) {
-			throw new Error('Person not found')
-		}
-		logger.debug(
-			`Retrieved person by unique attribute (${attribute}): ${JSON.stringify(
-				person
-			)}`
-		)
 		return person
 	} catch (error) {
-		logger.error(`Error getting person by unique attribute: ${error.message}`)
-		throw new Error(error.message)
+		throw error
 	}
 }
 
@@ -83,42 +55,20 @@ exports.getPersonByUniqueAttribute = async (attribute, value) => {
 exports.updatePersonByUniqueAttribute = async (
 	attribute,
 	value,
-	name,
-	surname,
-	patronym,
-	dateOfBirth,
-	rnokpp,
-	unzr,
-	passportNumber,
-	gender
+	updateData
 ) => {
 	try {
-		const [updatedRowsCount, updatedPersons] = await models.Person.update(
+		const [updatedPersons, updatedRowsCount] = await models.Person.update(
+			updateData,
 			{
-				name,
-				surname,
-				patronym,
-				dateOfBirth,
-				rnokpp,
-				unzr,
-				passportNumber,
-				gender
-			},
-			{ where: { [attribute]: value }, returning: true }
+				where: { [attribute]: value },
+				returning: true
+			}
 		)
-		if (updatedRowsCount === 0) {
-			throw new Error('Person not found')
-		}
-		logger.info(`Updated person by unique attribute (${attribute}): ${value}`)
+		return updatedRowsCount
 	} catch (error) {
-		if (error.name === 'SequelizeUniqueConstraintError') {
-			const errorMessage = error.errors.map(err => err.message).join('; ')
-			logger.error(`DB Error updating person: ${errorMessage}`)
-			throw new Error(errorMessage) // Викидає повідомлення про порушення унікального обмеження
-		} else {
-			logger.error(`Error updating person by unique attribute: ${error}`)
-			throw new Error(error.message)
-		}
+		console.error('Error updating persons:', error)
+		throw error
 	}
 }
 
@@ -128,16 +78,9 @@ exports.deletePersonByUniqueAttribute = async (attribute, value) => {
 		const deletedRowsCount = await models.Person.destroy({
 			where: { [attribute]: value }
 		})
-		if (deletedRowsCount === 0) {
-			throw new Error('Person not found')
-		}
-		logger.info(`Deleted person by unique attribute (${attribute}): ${value}`)
-		return {
-			message: `Person with ${attribute} = ${value} was deleted successfully.`
-		} // Відповідь про успіх
+		return deletedRowsCount
 	} catch (error) {
-		logger.error(`Error deleting person by unique attribute: ${error.message}`)
-		throw new Error(error.message)
+		throw error
 	}
 }
 

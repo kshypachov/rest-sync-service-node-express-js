@@ -5,7 +5,7 @@ const personService = require('../services/personService') // Імпортуєм
 
 // Функції контролера:
 // Обробляє створення нової особи. Делегує операцію створення функції personService.createPerson().
-// Повертає новостворену особу зі статусом 201, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
+// Повертає новостворену особу зі статусом 201, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка. В разі неможливості обробки запиту через конфлікти унікальності записів  повертає відповідь з помилкою зі статусом 409.
 exports.createPerson = async (req, res) => {
 	try {
 		const {
@@ -28,15 +28,26 @@ exports.createPerson = async (req, res) => {
 			passportNumber,
 			gender
 		})
+		logger.info(`Created person: ${JSON.stringify(newPerson)}`)
 		res.status(201).json(newPerson)
 	} catch (error) {
-		logger.error(`Controller Error creating person: ${error.message}`)
-		res.status(500).json({ error: error.message }) // Відправлення фактичного повідомлення про помилку клієнту
+		// Обробка для SequelizeUniqueConstraintError, який є типом помилки, що виникає, коли унікальне обмеження в базі даних порушується.
+		if (error.name === 'SequelizeUniqueConstraintError') {
+			const errorMessage = error.errors.map(err => err.message).join('; ')
+			logger.error(`DB Error creating person: ${errorMessage}`)
+			res.status(409).json({ error: errorMessage }) // Відправлення фактичного повідомлення про помилку клієнту
+		} else {
+			logger.error(`Error creating person: ${error.message}`)
+			res
+				.status(500)
+				.json({ error: `Failed to create person ${error.message}` }) // Відправлення фактичного повідомлення про помилку клієнту
+		}
 	}
 }
 
 // Обробляє отримання осіб за параметрами запиту. Делегує операцію функції personService.getPersonsByQueryParameters().
 // Повертає список осіб зі статусом 200, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
+// В разі відсутності записів в БД повертає відповідь з помилкою зі статусом 404.
 exports.getPersonsByQueryParameters = async (req, res) => {
 	try {
 		const {
@@ -61,31 +72,40 @@ exports.getPersonsByQueryParameters = async (req, res) => {
 			passportNumber,
 			gender
 		}
-    const filteredQueryParameters = Object.fromEntries(
-      Object.entries(queryParameters).filter(([key, value]) => value !== undefined)
-  );
+		const filteredQueryParameters = Object.fromEntries(
+			Object.entries(queryParameters).filter(
+				([key, value]) => value !== undefined
+			)
+		)
 		const offset = (_page - 1) * _limit
-		// Parse _limit as integer
+		// Перетворення _limit у ціле число
 		const limit = parseInt(_limit)
 		const persons = await personService.getPersonsByQueryParameters(
 			filteredQueryParameters,
 			offset,
 			limit
 		)
-    console.log(persons.length);
-		if (persons.length==0) {
+		logger.info(
+			`Retrieved ${
+				persons.length
+			} persons by query parameters: ${JSON.stringify(queryParameters)}`
+		)
+		if (persons.length == 0) {
 			return res.status(404).json({ error: 'Zero persons found' })
 		}
-		// Retrieve total count of records (before pagination)
+		// Отримання загальної кількості записів (до пагінації)
 		const totalCount = await personService.getPersonsByQueryParametersCount(
 			filteredQueryParameters
 		)
-		// Set X-Total-Count header
+		logger.info(`Total count of persons by query parameters: ${totalCount}`)
+		// Встановлення заголовка X-Total-Count
 		res.set('X-Total-Count', totalCount)
 		res.status(200).json(persons)
 	} catch (error) {
-		console.error(`Error getting persons: ${error.message}`)
-		res.status(500).json({ error: 'Failed to get persons' })
+		logger.error(`Error getting persons by query parameters: ${error.message}`)
+		res.status(500).json({
+			error: `Error getting persons by query parameters: ${error.message}`
+		})
 	}
 }
 
@@ -102,15 +122,20 @@ exports.getPersonByUniqueAttribute = async (req, res) => {
 		if (!person) {
 			return res.status(404).json({ error: 'Person not found' })
 		}
+		logger.debug(
+			`Retrieved person by unique attribute (${attribute}): ${JSON.stringify(
+				person
+			)}`
+		)
 		res.status(200).json(person)
 	} catch (error) {
-		logger.error(`Error getting person: ${error.message}`)
+		logger.error(`Error getting person by unique attribute: ${error.message}`)
 		res.status(500).json({ error: `Failed to get person:${error.message}` })
 	}
 }
 
 // Обробляє оновлення особи за унікальним атрибутом. Делегує операцію функції personService.updatePersonByUniqueAttribute().
-// Повертає оновлену особу зі статусом 200, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
+// Повертає оновлену особу зі статусом 200, якщо успішно, або відповідь 'Person not found' зі статусом 404, якщо особа не існує, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка. В разі неможливості обробки запиту через конфлікти унікальності записів  повертає відповідь з помилкою зі статусом 409.
 exports.updatePersonByUniqueAttribute = async (req, res) => {
 	try {
 		const { attribute, value } = req.params
@@ -124,44 +149,68 @@ exports.updatePersonByUniqueAttribute = async (req, res) => {
 			passportNumber,
 			gender
 		} = req.query
-		await personService.updatePersonByUniqueAttribute(
+		const updatedRowsCount = await personService.updatePersonByUniqueAttribute(
 			attribute,
 			value,
-			name,
-			surname,
-			patronym,
-			dateOfBirth,
-			rnokpp,
-			unzr,
-			passportNumber,
-			gender
+			{
+				name,
+				surname,
+				patronym,
+				dateOfBirth,
+				rnokpp,
+				unzr,
+				passportNumber,
+				gender
+			}
 		)
+		if (updatedRowsCount === 0) {
+			logger.info(`Person not found (${attribute}): ${value}`)
+			return res.status(404).json({
+				error: `Person with atribute ${attribute}: ${value} not found in DB`
+			})
+		}
+		logger.info(`Updated person by unique attribute (${attribute}): ${value}`)
 		res.status(200).json('Person updated')
 	} catch (error) {
-		logger.error(`Error updating person: ${error.message}`)
-		res.status(500).json({ error: `Error updating person:${error.message}` })
+		if (error.name === 'SequelizeUniqueConstraintError') {
+			const errorMessage = error.errors.map(err => err.message).join('; ')
+			logger.error(`DB Error updating person: ${errorMessage}`)
+			res.status(409).json({ error: errorMessage })
+		} else {
+			logger.error(`Error updating person: ${error.message}`)
+			res.status(500).json({ error: `Error updating person: ${error.message}` })
+		}
 	}
 }
 
 // Обробляє видалення особи за унікальним атрибутом. Делегує операцію функції personService.deletePersonByUniqueAttribute().
-// Повертає відповідь успіху зі статусом 204, якщо успішно, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
+// Повертає відповідь успіху зі статусом 200, якщо успішно, або відповідь 'Person not found' зі статусом 404, якщо особа не існує, або логує та повертає відповідь з помилкою зі статусом 500, якщо сталася помилка.
 exports.deletePersonByUniqueAttribute = async (req, res) => {
 	try {
 		const { attribute, value } = req.params
-		const result = await personService.deletePersonByUniqueAttribute(
+		const deletedRowsCount = await personService.deletePersonByUniqueAttribute(
 			attribute,
 			value
 		)
-		res.status(204).json(result) 
-	} catch (error) {
-		if (error.message === 'Person not found') {
-			res.status(404).json({ error: error.message })
-		} else {
-			logger.error(`Error deleting person: ${error.message}`)
-			res
-				.status(500)
-				.json({ error: `Failed to delete person: ${error.message}` })
+		if (deletedRowsCount === 0) {
+			logger.info(
+				`Delete failed. Person with atribute ${attribute}: ${value} not found in DB`
+			)
+			return res.status(404).json({
+				error: `Delete failed. Person with atribute ${attribute}: ${value} not found in DB`
+			})
 		}
+		logger.info(
+			`Person with attribute ${attribute} = ${value} was deleted successfully.`
+		)
+		res
+			.status(200)
+			.json(
+				`Person with attribute ${attribute} = ${value} was deleted successfully.`
+			)
+	} catch (error) {
+		logger.error(`Error deleting person by unique attribute: ${error.message}`)
+		res.status(500).json({ error: `Failed to delete person: ${error.message}` })
 	}
 }
 //Обробка помилок реалізована за допомогою блоків try-catch для перехоплення можливих помилок, які можуть виникнути під час операцій з базою даних. Помилки логуються за допомогою логера, а відповідні відповіді з помилками надсилаються клієнту.

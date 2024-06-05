@@ -57,6 +57,9 @@
           "201": {
             "description": "Created"
           },
+          "409": {
+            "description": "Conflict"
+          },
           "422": {
             "description": "Unprocessable Entity"
           },
@@ -233,6 +236,12 @@
           "200": {
             "description": "OK"
           },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
           "422": {
             "description": "Unprocessable Entity"
           },
@@ -262,8 +271,8 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "OK"
           },
           "404": {
             "description": "Not Found"
