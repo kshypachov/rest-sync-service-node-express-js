@@ -6,11 +6,14 @@ const bodyParser = require('body-parser') // body-parser для аналізу J
 const router = express.Router() // Створення екземпляра маршрутизатора
 const swaggerUi = require('swagger-ui-express') // Swagger UI для візуалізації API
 const swaggerDocument = require('./swagger-output.json') // Шлях до сгенерованого JSON файлу Swagger
-const app = express() // Створення екземпляра Express-додатку
+const app = express() // Створення екземпляра Express-додатку\
+const cors = require('cors');
+
 
 // Налаштування Middleware
 
-app.use(helmet()) // Використання middleware Helmet для налаштування різних заголовків безпеки HTTP
+// Використання middleware Helmet для налаштування різних заголовків безпеки HTTP
+helmet({ contentSecurityPolicy: process.env.СONTENT_SECURITY_POLICY, }) // contentSecurityPolicy цей хедер відповідає в тому числі на можливість доступу до документації SWAGGER по зовнішній адресі.
 app.use(bodyParser.json()) // Використання middleware bodyParser для аналізу вхідних JSON запитів
 
 // Налаштування Morgan для використання Winston для логування

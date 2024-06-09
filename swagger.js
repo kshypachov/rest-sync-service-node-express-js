@@ -1,11 +1,20 @@
-const swaggerAutogen = require('swagger-autogen')()
+const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' })
 
 const doc = {
 	info: {
 		title: 'rest-sync-service-node-express-js',
 		description: 'Description'
 	},
-	host: 'localhost:3000', // by default: 'localhost:3000'
+	servers: [
+		{
+			url: 'http://localhost:3000',
+			description: 'Localhost server',
+	},
+	{
+			url: 'http://10.0.20.10:3000',
+			description: 'External IP server',
+	}
+	]
 }
 
 const outputFile = './swagger-output.json'
