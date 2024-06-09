@@ -3,18 +3,10 @@ const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' })
 const doc = {
 	info: {
 		title: 'rest-sync-service-node-express-js',
-		description: 'Description'
+		description: 'This Node.js Express server allows you to manage a list of people. It provides endpoints to perform CRUD operations on person records stored in the database. The server uses Sequelize as an ORM to interact with the database and has features such as input validation, logging, and error handling.'
 	},
-	servers: [
-		{
-			url: 'http://localhost:3000',
-			description: 'Localhost server',
-	},
-	{
-			url: 'http://10.0.20.10:3000',
-			description: 'External IP server',
-	}
-	]
+	host: ''
+	
 }
 
 const outputFile = './swagger-output.json'

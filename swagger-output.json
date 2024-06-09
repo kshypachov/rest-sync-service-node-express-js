@@ -2,19 +2,10 @@
   "openapi": "3.0.0",
   "info": {
     "title": "rest-sync-service-node-express-js",
-    "description": "Description",
+    "description": "This Node.js Express server allows you to manage a list of people. It provides endpoints to perform CRUD operations on person records stored in the database. The server uses Sequelize as an ORM to interact with the database and has features such as input validation, logging, and error handling.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://localhost:3000",
-      "description": "Localhost server"
-    },
-    {
-      "url": "http://10.0.20.10:3000",
-      "description": "External IP server"
-    }
-  ],
+  "host": "",
   "paths": {
     "/person/": {
       "post": {
@@ -190,42 +181,14 @@
           }
         },
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "attribute": {
-                    "example": "any"
-                  },
-                  "value": {
-                    "example": "any"
-                  },
-                  "name": {
-                    "example": "any"
-                  },
-                  "surname": {
-                    "example": "any"
-                  },
-                  "patronym": {
-                    "example": "any"
-                  },
-                  "dateOfBirth": {
-                    "example": "any"
-                  },
-                  "rnokpp": {
-                    "example": "any"
-                  },
-                  "unzr": {
-                    "example": "any"
-                  },
-                  "passportNumber": {
-                    "example": "any"
-                  },
-                  "gender": {
-                    "example": "any"
-                  }
-                }
+                "$ref": "#/models/Person"
+              },
+              "example": {
+                "$ref": "#/models/Person"
               }
             }
           }

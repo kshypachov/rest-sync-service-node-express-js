@@ -101,6 +101,7 @@ router.put(
 		// #swagger.tags = ['Person Service']
 		// #swagger.description = 'Route to update persons by attribute. It also uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the  updatePersons controller function.'
 		// #swagger.responses[500] = { description: 'Internal Server Error' }
+	
 		logger.info('Atempt to update persons') // Логування спроби оновлення особи
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
