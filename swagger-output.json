@@ -17,7 +17,7 @@
           "Person Service"
         ],
         "summary": "create Person",
-        "description": "Route to create a new person. It uses request validation middleware (createPersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.",
+        "description": "Route to create a new person. It uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.",
         "parameters": [
           {
             "name": "body",
@@ -133,39 +133,8 @@
           "404": {
             "description": "Not Found"
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/person/{attribute}/{value}": {
-      "get": {
-        "tags": [
-          "Person Service"
-        ],
-        "summary": "get Person By Unique Attribute",
-        "description": "Route to get a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the getPersonByUniqueAttribute controller function.",
-        "parameters": [
-          {
-            "name": "attribute",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "value",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
+          "422": {
+            "description": "Unprocessable Entity"
           },
           "500": {
             "description": "Internal Server Error"
@@ -176,60 +145,47 @@
         "tags": [
           "Person Service"
         ],
-        "summary": "update Person By Unique Attribute",
-        "description": "Route to update a person by unique attribute like unzr,rnokpp,passportNumber or id. It also uses request validation middleware (updatePersonValidation) to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the updatePersonByUniqueAttribute controller function.",
+        "summary": "update Persons By Attribute",
+        "description": "Route to update persons by attribute. It also uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the updatePersons controller function.",
         "parameters": [
           {
-            "name": "attribute",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "value",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "surname",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "patronym",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "dateOfBirth",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "rnokpp",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "unzr",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "passportNumber",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "gender",
-            "in": "query",
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "attribute": {
+                  "example": "any"
+                },
+                "value": {
+                  "example": "any"
+                },
+                "name": {
+                  "example": "any"
+                },
+                "surname": {
+                  "example": "any"
+                },
+                "patronym": {
+                  "example": "any"
+                },
+                "dateOfBirth": {
+                  "example": "any"
+                },
+                "rnokpp": {
+                  "example": "any"
+                },
+                "unzr": {
+                  "example": "any"
+                },
+                "passportNumber": {
+                  "example": "any"
+                },
+                "gender": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -254,19 +210,17 @@
         "tags": [
           "Person Service"
         ],
-        "summary": "delete Person By Unique Attribute",
-        "description": "Route to delete a person by unique attribute like unzr,rnokpp,passportNumber or id. Delegates the operation to the deletePersonByUniqueAttribute controller function.",
+        "summary": "delete Persons By Attribute",
+        "description": "Route to delete persons by attribute. It also uses request validation middleware to validate the request query. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the operation to the deletePersons controller function.",
         "parameters": [
           {
             "name": "attribute",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "type": "string"
           },
           {
             "name": "value",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -276,6 +230,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
           },
           "500": {
             "description": "Internal Server Error"
