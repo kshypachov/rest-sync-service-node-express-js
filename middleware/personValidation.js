@@ -1,4 +1,4 @@
-const { check } = require('express-validator') // Імпорт функції check з модуля express-validator для створення правил валідації
+const { check, body, query } = require('express-validator') // Імпорт функції check з модуля express-validator для створення правил валідації
 
 // Middleware валідації для маршруту createPerson
 
@@ -12,44 +12,44 @@ const { check } = require('express-validator') // Імпорт функції ch
 //Метод .escape() замінює <, >, &, ', " та / відповідними об'єктами HTML. Це корисно для запобігання атакам XSS, гарантуючи, що введені користувачем дані розглядаються як звичайний текст, а не як виконуваний HTML або JavaScript.
 
 exports.createPerson = [
-	check('name') // Валідація поля "name"
+	body('name') // Валідація поля "name"
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "name" від 1 до 50 символів
 		.withMessage('Name must be between 1 and 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('surname') // Валідація поля "surname"
+	body('surname') // Валідація поля "surname"
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "surname" від 1 до 50 символів
 		.withMessage('Surname must be between 1 and 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('patronym') // Валідація поля "patronym"
+	body('patronym') // Валідація поля "patronym"
 		.optional() // Поле "patronym" є необов'язковим
 		.if(value => value !== '') // Застосовувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "patronym" не більше 50 символів, якщо воно присутнє
 		.withMessage('Patronym must be less than 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('dateOfBirth') // Валідація поля "dateOfBirth"
+	body('dateOfBirth') // Валідація поля "dateOfBirth"
 		.isDate({ format: 'YYYY-MM-DD' }) // Перевірка, що "dateOfBirth" є датою у форматі 'YYYY-MM-DD'
 		.withMessage('Date of birth must be a valid date in YYYY-MM-DD format') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('rnokpp') // Валідація поля "rnokpp"
+	body('rnokpp') // Валідація поля "rnokpp"
 		.isLength({ min: 10, max: 10 }) // Перевірка довжини поля "rnokpp" - 10 символів
 		.withMessage('RNOKPP must be 10 digits. Format: xxxxxxxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('unzr') // Валідація поля "unzr"
+	body('unzr') // Валідація поля "unzr"
 		.isLength({ min: 14, max: 14 }) // Перевірка довжини поля "unzr" - 14 символів
 		.withMessage('UNZR must be 14 characters long. Format: xxxxxxxx-xxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('passportNumber') // Валідація поля "passportNumber"
+	body('passportNumber') // Валідація поля "passportNumber"
 		.isLength({ min: 9, max: 9 }) // Перевірка довжини поля "passportNumber" - 9 символів
 		.withMessage('Passport number must be 9 digits. Format: xxxxxxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('gender') // Валідація поля "gender"
+	body('gender') // Валідація поля "gender"
 		.isIn(['male', 'female']) // Перевірка, що значення поля "gender" є "male" або "female"
 		.withMessage('gender must be either "male" or "female"') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
@@ -58,63 +58,63 @@ exports.createPerson = [
 
 // Middleware валідації для маршруту getPersons
 exports.getPersons = [
-	check('id') // Перевірка "id"
+	query('id') // Перевірка "id"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Довжина від 1 до 50 символів
 		.withMessage('ID must be between 1 and 50 characters') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('name') // Перевірка "name"
+	query('name') // Перевірка "name"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Довжина від 1 до 50 символів
 		.withMessage('Name must be between 1 and 50 characters') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('surname') // Перевірка "surname"
+	query('surname') // Перевірка "surname"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Довжина від 1 до 50 символів
 		.withMessage('Surname must be between 1 and 50 characters') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('patronym') // Перевірка "patronym"
+	query('patronym') // Перевірка "patronym"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 0, max: 50 }) // Довжина не більше 50 символів
 		.withMessage('Patronym must be less than 50 characters') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('dateOfBirth') // Перевірка "dateOfBirth"
+	query('dateOfBirth') // Перевірка "dateOfBirth"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isDate({ format: 'YYYY-MM-DD' }) // Дата у форматі 'YYYY-MM-DD'
 		.withMessage('Date of birth must be a valid date in YYYY-MM-DD format') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('rnokpp') // Перевірка "rnokpp"
+	query('rnokpp') // Перевірка "rnokpp"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 10, max: 10 }) // Довжина 10 символів
 		.withMessage('RNOKPP must be 10 digits. Format: xxxxxxxxxx') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('unzr') // Перевірка "unzr"
+	query('unzr') // Перевірка "unzr"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 14, max: 14 }) // Довжина 14 символів
 		.withMessage('UNZR must be 14 characters long. Format: xxxxxxxx-xxxxx') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('passportNumber') // Перевірка "passportNumber"
+	query('passportNumber') // Перевірка "passportNumber"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isLength({ min: 9, max: 9 }) // Довжина 9 символів
 		.withMessage('Passport number must be 9 digits. Format: xxxxxxxxx') // Повідомлення про помилку
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('gender') // Перевірка "gender"
+	query('gender') // Перевірка "gender"
 		.optional() // Необов'язкове поле
 		.if(value => value !== '') // Застосувати перевірку, якщо значення не є порожнім рядком
 		.isIn(['male', 'female']) // Має бути "male" або "female"
@@ -125,7 +125,7 @@ exports.getPersons = [
 
 // Middleware валідації для маршруту updatePersons
 exports.updatePersons = [
-	check('attribute') // Перевірка "attribute"
+	body('attribute') // Перевірка "attribute"
 		.isIn([
 			'id',
 			'name',
@@ -142,63 +142,63 @@ exports.updatePersons = [
 		) // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('value') // Перевірка "value"
+	body('value') // Перевірка "value"
 		.optional() // Поле "value" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "value" від 1 до 50 символів
 		.withMessage('value must be between 1 and 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('name') // Перевірка "name"
+	body('name') // Перевірка "name"
 		.optional() // Поле "name" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "name" від 1 до 50 символів
 		.withMessage('Name must be between 1 and 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('surname') // Перевірка "surname"
+	body('surname') // Перевірка "surname"
 		.optional() // Поле "surname" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "surname" від 1 до 50 символів
 		.withMessage('Surname must be between 1 and 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('patronym') // Перевірка "patronym"
+	body('patronym') // Перевірка "patronym"
 		.optional() // Поле "patronym" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "patronym" від 1 до 50 символів
 		.withMessage('Patronym must be less than 50 characters') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('dateOfBirth') // Перевірка "dateOfBirth"
+	body('dateOfBirth') // Перевірка "dateOfBirth"
 		.optional() // Поле "dateOfBirth" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку лише якщо значення не є порожнім рядком
 		.isDate({ format: 'YYYY-MM-DD' }) // Перевірка, що "dateOfBirth" є датою у форматі 'YYYY-MM-DD'
 		.withMessage('Date of birth must be a valid date in YYYY-MM-DD format') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('rnokpp') // Перевірка "rnokpp"
+	body('rnokpp') // Перевірка "rnokpp"
 		.optional() // Поле "rnokpp" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку лише якщо значення не є порожнім рядком
 		.isLength({ min: 10, max: 10 }) // Перевірка довжини поля "rnokpp" - 10 символів
 		.withMessage('RNOKPP must be 10 digits. Format: xxxxxxxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('unzr') // Перевірка "unzr"
+	body('unzr') // Перевірка "unzr"
 		.optional() // Поле  є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку лише якщо значення не є порожнім рядком
 		.isLength({ min: 14, max: 14 }) // Перевіряє, що довжина поля "unzr" дорівнює 14 символів
 		.withMessage('UNZR must be 14 characters long. Format: xxxxxxxx-xxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('passportNumber') // Перевірка "passportNumber"
+	body('passportNumber') // Перевірка "passportNumber"
 		.optional() // Поле є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку лише якщо значення не є порожнім рядком
 		.isLength({ min: 9, max: 9 }) // Перевіряє, що довжина поля "passportNumber" дорівнює 9 символів
 		.withMessage('Passport number must be 9 digits. Format: xxxxxxxxx') // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('gender') // Перевірка "gender"
+	body('gender') // Перевірка "gender"
 		.optional() // Поле є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку лише якщо значення не є порожнім рядком
 		.isIn(['male', 'female']) // Перевіряє, що значення поля "gender" є або "male", або "female"
@@ -209,7 +209,7 @@ exports.updatePersons = [
 
 // Middleware валідації для маршруту deletePersons
 exports.deletePersons = [
-	check('attribute') // Перевірка "attribute"
+	query('attribute') // Перевірка "attribute"
 		.isIn([
 			'id',
 			'name',
@@ -226,7 +226,7 @@ exports.deletePersons = [
 		) // Повідомлення про помилку, якщо умова не виконана
 		.trim() // Видаляє пробіли з обох кінців рядка.
 		.escape(), // Замінює <, >, &, ', " та / відповідними об'єктами HTML.
-	check('value') // Перевірка "value"
+	query('value') // Перевірка "value"
 		.optional() // Поле "value" є необов'язковим
 		.if(value => value !== '') // Застосувати перевірку довжини лише якщо значення не є порожнім рядком
 		.isLength({ min: 1, max: 50 }) // Перевірка довжини поля "value" від 1 до 50 символів
