@@ -31,8 +31,10 @@ app.use(
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)) // Обслуговування Swagger UI на шляху /api-docs
 // Імпорт маршрутов
 const personRouter = require('./routes/person') // Імпорт маршрутизатора для роботи з person
+const statusRouter = require('./routes/status'); 
 // Використання маршрутов
 app.use('/person', personRouter) // Підключення маршрутизатора person для запитів до URL /person
+app.use('/status', statusRouter);
 
 // Middleware для обробки помилок
 app.use((err, req, res, next) => {

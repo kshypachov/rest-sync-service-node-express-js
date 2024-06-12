@@ -181,14 +181,42 @@
           }
         },
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/models/Person"
-              },
-              "example": {
-                "$ref": "#/models/Person"
+                "type": "object",
+                "properties": {
+                  "attribute": {
+                    "example": "any"
+                  },
+                  "value": {
+                    "example": "any"
+                  },
+                  "name": {
+                    "example": "any"
+                  },
+                  "surname": {
+                    "example": "any"
+                  },
+                  "patronym": {
+                    "example": "any"
+                  },
+                  "dateOfBirth": {
+                    "example": "any"
+                  },
+                  "rnokpp": {
+                    "example": "any"
+                  },
+                  "unzr": {
+                    "example": "any"
+                  },
+                  "passportNumber": {
+                    "example": "any"
+                  },
+                  "gender": {
+                    "example": "any"
+                  }
+                }
               }
             }
           }
@@ -225,6 +253,23 @@
           },
           "422": {
             "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/status/": {
+      "get": {
+        "tags": [
+          "Service Status"
+        ],
+        "summary": "Check Service Status",
+        "description": "Route to check the service status.",
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "500": {
             "description": "Internal Server Error"
