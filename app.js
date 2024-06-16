@@ -34,7 +34,7 @@ const personRouter = require('./routes/person') // Імпорт маршрути
 const statusRouter = require('./routes/status'); 
 // Використання маршрутов
 app.use('/person', personRouter) // Підключення маршрутизатора person для запитів до URL /person
-app.use('/status', statusRouter);
+app.use('/status', statusRouter); // Використання маршруту для перевірки статусу сервісу
 
 // Middleware для обробки помилок
 app.use((err, req, res, next) => {

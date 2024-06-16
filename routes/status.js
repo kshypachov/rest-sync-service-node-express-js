@@ -5,6 +5,8 @@ const router = express.Router()
 const statusController = require('../controllers/statusController')
 const logger = require('../middleware/logger');
 
+
+// Обробка GET-запиту для перевірки статусу сервісу
 router.get('/', (req, res, next) => {
 	// #swagger.summary = 'Check Service Status'
 	// #swagger.tags = ['Service Status']
