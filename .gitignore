@@ -131,3 +131,6 @@ dist
 
 # trash
 trash
+
+# vscode
+.vscode

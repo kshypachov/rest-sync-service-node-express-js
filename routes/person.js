@@ -7,43 +7,6 @@ const logger = require('../middleware/logger') // Імпортуємо логе�
 
 // Цей файл маршрутизатора ефективно обробляє CRUD операції для осіб, делегує операції відповідним функціям контролера та виконує валідацію запитів за допомогою middleware.
 
-
-//TODO винести из роутов в мидлвер 
-// Middleware для логування HTTP запитів
-router.use((req, res, next) => {
-	logger.info(`[${req.method} ${req.url}]`) // Логування методу та URL запиту
-	logger.debug(`Headers: ${JSON.stringify(req.headers)}`) // Логування заголовків запиту
-	logger.debug(`Body: ${JSON.stringify(req.body)}`) // Логування тіла запиту
-	next() // Передача управління наступному middleware
-})
-
-// Middleware для логування відповідей
-router.use((req, res, next) => {
-	const oldWrite = res.write
-	const oldEnd = res.end
-	const chunks = []
-
-	res.write = (...restArgs) => {
-		chunks.push(Buffer.from(restArgs[0]))
-		oldWrite.apply(res, restArgs)
-	}
-
-	res.end = (...restArgs) => {
-		if (restArgs[0]) {
-			chunks.push(Buffer.from(restArgs[0]))
-		}
-		const body = Buffer.concat(chunks).toString('utf8')
-		logger.debug(
-			`Response for ${req.method} ${req.url}: Status ${
-				res.statusCode
-			}, Headers: ${JSON.stringify(res.getHeaders())}, Body: ${body}`
-		)
-		oldEnd.apply(res, restArgs)
-	}
-
-	next() // Передача управління наступному middleware
-})
-
 /// Маршрут для створення нової особи
 router.post(
 	'/',
