@@ -14,12 +14,24 @@
         ],
         "summary": "create Person",
         "description": "Route to create a new person. It uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.",
+        "parameters": [
+          {
+            "name": "content-type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
           },
           "409": {
             "description": "Conflict"
+          },
+          "415": {
+            "description": "Unsupported Media Type! Only application/json supported."
           },
           "422": {
             "description": "Unprocessable Entity"
@@ -163,6 +175,15 @@
         ],
         "summary": "update Persons By Attribute",
         "description": "Route to update persons by attribute. It also uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the updatePersons controller function.",
+        "parameters": [
+          {
+            "name": "content-type",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -172,6 +193,9 @@
           },
           "409": {
             "description": "Conflict"
+          },
+          "415": {
+            "description": "Unsupported Media Type! Only application/json supported."
           },
           "422": {
             "description": "Unprocessable Entity"

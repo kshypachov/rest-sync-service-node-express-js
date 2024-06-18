@@ -4,17 +4,20 @@ const personController = require('../controllers/personController') // Імпо�
 const personValidation = require('../middleware/personValidation') // Middleware для валідації запитів: Імпортуємо для валідації запитів за допомогою Express Validator
 const { validationResult } = require('express-validator') // Імпортуємо validationResult для обробки результатів валідації
 const logger = require('../middleware/logger') // Імпортуємо логер Winston
+const validateContentType = require('../middleware/contentTypeValidation')
 
 // Цей файл маршрутизатора ефективно обробляє CRUD операції для осіб, делегує операції відповідним функціям контролера та виконує валідацію запитів за допомогою middleware.
 
 /// Маршрут для створення нової особи
 router.post(
 	'/',
+	validateContentType,
 	personValidation.createPerson, // Використання middleware для валідації запиту
 	(req, res, next) => {
 		// #swagger.summary = 'create Person'
 		// #swagger.tags = ['Person Service']
 		// #swagger.description = 'Route to create a new person. It uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the creation operation to the createPerson controller function.'
+		// #swagger.responses[415] = { description: 'Unsupported Media Type! Only application/json supported.' }
 		// #swagger.responses[500] = { description: 'Internal Server Error' }
 		logger.info('Attempt to create person')
 		const errors = validationResult(req)
@@ -60,13 +63,14 @@ router.get(
 // Маршрут для оновлення осіб
 router.put(
 	'/',
+	validateContentType,
 	personValidation.updatePersons, // Використання middleware для валідації запиту
 	(req, res, next) => {
 		// #swagger.summary = 'update Persons By Attribute'
 		// #swagger.tags = ['Person Service']
 		// #swagger.description = 'Route to update persons by attribute. It also uses request validation middleware to validate the request body. If there are validation errors, it logs them and returns a 422 status with the validation errors. Otherwise, it delegates the update operation to the  updatePersons controller function.'
+		// #swagger.responses[415] = { description: 'Unsupported Media Type! Only application/json supported.' }
 		// #swagger.responses[500] = { description: 'Internal Server Error' }
-	
 		logger.info('Atempt to update persons') // Логування спроби оновлення особи
 		const errors = validationResult(req)
 		if (!errors.isEmpty()) {
