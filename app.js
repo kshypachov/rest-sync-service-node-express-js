@@ -45,11 +45,20 @@ app.use(
 app.use(requestLogger)
 app.use(responseLogger)
 
+// Middleware для перенаправлення з кореневого URL на /api-docs
+app.use((req, res, next) => {
+	if (req.path === '/') {
+			res.redirect('/api-docs');
+	} else {
+			next();
+	}
+});
+
 // Налаштування маршрутів
 
 // Обслуговування Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)) // Обслуговування Swagger UI на шляху /api-docs
-// Імпорт маршрутов
+// Імпорт маршрутів
 const personRouter = require('./routes/person') // Імпорт маршрутизатора для роботи з person
 const statusRouter = require('./routes/status'); 
 
