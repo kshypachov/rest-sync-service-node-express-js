@@ -3,9 +3,9 @@
 # Змінні для конфігурації
 REPO_URL="https://github.com/roman-lakhnov/rest-sync-service-node-express-js.git"
 PROJECT_DIR="rest-sync-service-node-express-js"
-DB_USER="service"
-DB_PASSWORD="1111"
-DB_NAME="ua_register"
+DB_USER="your_db_user"
+DB_PASSWORD="your_db_password"
+DB_NAME="your_db_name"
 DB_HOST="localhost" # Використовується localhost для встановлення MariaDB на цьому сервері
 DB_PORT="3306"      # Порт за замовчуванням для MariaDB
 SERVICE_PORT="3000" # Порт, на якому буде запущено сервер
