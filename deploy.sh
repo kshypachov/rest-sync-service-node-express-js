@@ -1,7 +1,7 @@
 #!/bin/bash
  
 # Змінні для конфігурації
-REPO_URL="https://github.com/roman-lakhnov/rest-sync-service-node-express-js.git"
+REPO_URL="https://github.com/kshypachov/rest-sync-service-node-express-js.git"
 PROJECT_DIR="rest-sync-service-node-express-js"
 DB_USER="your_db_user"
 DB_PASSWORD="your_db_password"
