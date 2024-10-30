@@ -14,7 +14,7 @@ SERVICE_PORT="3000" # Порт, на якому буде запущено сер
 echo "Встановлення системних залежностей..."
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash - 
 sudo apt-get update
-sudo apt-get install -y curl libmariadb-dev gcc nodejs npm git
+sudo apt-get install -y curl libmariadb-dev gcc nodejs git
  
 # Налаштування репозиторію MariaDB
 echo "Налаштування репозиторію MariaDB..."
