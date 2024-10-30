@@ -12,6 +12,7 @@ SERVICE_PORT="3000" # Порт, на якому буде запущено сер
  
 # Встановлення системних залежностей
 echo "Встановлення системних залежностей..."
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash - 
 sudo apt-get update
 sudo apt-get install -y curl libmariadb-dev gcc nodejs npm git
  
