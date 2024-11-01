@@ -51,7 +51,7 @@
 2. Клонуйте репозиторій:
 
     ```bash
-    git clone https://github.com/kshypachov/rest-sync-service-node-express-js.git
+    git clone https://github.com/roman-lakhnov/rest-sync-service-node-express-js.git
     ```
 
 3. Перейдіть у директорію проекту:

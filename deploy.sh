@@ -5,7 +5,7 @@ GREEN="\033[32m"
 RESET="\033[0m"
  
 # Змінні для конфігурації
-REPO_URL="https://github.com/kshypachov/rest-sync-service-node-express-js.git"
+REPO_URL="https://github.com/roman-lakhnov/rest-sync-service-node-express-js.git"
 PROJECT_DIR="rest-sync-service-node-express-js"
 DB_USER="node_user"
 DB_PASSWORD="node_password"

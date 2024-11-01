@@ -26,7 +26,7 @@ if(logDirectory){
 			) // Визначення формату логів
 		),
 		transports: [
-			new winston.transports.Console(), // Log to the console
+			// new winston.transports.Console(), // Log to the console
 			new winston.transports.File({
 				filename: path.join(logDirectory, errorLogFileName),
 				level: 'error'
