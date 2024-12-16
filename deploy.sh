@@ -48,7 +48,11 @@ cd $PROJECT_DIR
 # Встановлення залежностей Node.js
 echo -e "${GREEN}Встановлення залежностей Node.js...${RESET}"
 npm install
- 
+
+# Генерування Swagger документації
+echo -e "${GREEN}Генерування Swagger документації...${RESET}"
+npm run swagger
+
 # Створення файлу .env та налаштування змінних середовища
 echo -e "${GREEN}Створення файлу .env та налаштування змінних середовища...${RESET}"
 cat > .env << EOL
