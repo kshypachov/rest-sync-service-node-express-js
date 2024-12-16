@@ -42,7 +42,7 @@ sudo systemctl enable mariadb
 #### Перевірка статусу MariaDB
 Перевірте, чи працює MariaDB:
 ```bash
-sudo systemctl start mariadb
+sudo systemctl status mariadb
 ```
 Якщо базу даних запущено, можна рухатись до наступних кроків.
 В інакшому випадку потрібно перевірити чи не буде зроблено помилку в одному з попередніх кроків.
@@ -73,6 +73,12 @@ GRANT ALL PRIVILEGES ON your_db_name.* TO 'your_db_user'@'%';
 ```sql
 FLUSH PRIVILEGES;
 ```
+
+6. Завершіть роботу з базою даних:
+```sql
+EXIT;
+```
+
 Тепер у вас є база даних та користувач, і можна рухатися до налаштування та запуску сервісу.
 
 ### 4. Клонування репозиторію
@@ -90,6 +96,11 @@ cd rest-sync-service-node-express-js
 3. Встановіть залежності Node.js
 ```bash
 npm install
+```
+
+4. Запустіть процес генерування документації:
+```bash
+npm run swagger
 ```
 
 ### 5. Конфігурування сервісу
@@ -175,12 +186,12 @@ sudo systemctl start rest-sync-service-node-express-js
 
 3. Додайте сервіс до автозапуску:
 ```bash
-sudo systemctl enable est-sync-service-node-express-js
+sudo systemctl enable rest-sync-service-node-express-js
 ```
 
 4.	Перевірте статус сервісу:
 ```bash
-sudo systemctl status est-sync-service-node-express-js
+sudo systemctl status rest-sync-service-node-express-js
 ```
 
 ### 8. Логування та моніторинг
