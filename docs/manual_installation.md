@@ -197,7 +197,7 @@ sudo systemctl status rest-sync-service-node-express-js
 ### 8. Логування та моніторинг
 Для перевірки логів сервісу використовуйте команду:
 ```bash
-journalctl -u est-sync-service-node-express-js -f
+journalctl -u rest-sync-service-node-express-js -f
 ```
 Також сервіс пиши лог файл, його розташування вказане у конфігураційному файлі `.env`
 
