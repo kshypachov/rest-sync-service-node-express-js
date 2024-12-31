@@ -11,6 +11,8 @@ ARG NODE_VERSION=20
 FROM node:${NODE_VERSION}-alpine
 
 # Use production node environment by default.
+
+
 ENV NODE_ENV production
 
 
@@ -34,5 +36,8 @@ COPY . .
 # Expose the port that the application listens on.
 EXPOSE 3000
 
-# Run the application.
-CMD npm start
+# Run the application. For production !!!
+#CMD npm start
+
+#Run the application. For development purposes
+CMD npx sequelize db:migrate && npm start
