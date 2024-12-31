@@ -2,6 +2,7 @@
 set -e
 
 GREEN="\033[32m"
+RED="\033[31m"
 RESET="\033[0m"
  
 # Змінні для конфігурації
@@ -101,4 +102,4 @@ sudo systemctl daemon-reload
 sudo systemctl start rest-sync-service-node-express-js
 sudo systemctl enable rest-sync-service-node-express-js
  
-echo -e "${GREEN}Встановлення завершено! Сервіс rest-sync-service-node-express-js запущено та додано в автозапуск.${RESET}"
+echo -e "${GREEN}Встановлення завершено! Сервіс ${RED} rest-sync-service-node-express-js${GREEN} запущено та додано в автозапуск.${RESET}"
