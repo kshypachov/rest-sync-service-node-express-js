@@ -18,7 +18,7 @@ sudo apt-get install -y curl libmariadb-dev gcc nodejs git
 ```bash
 curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash
 ```
-### 3. Встановити СКБД MariaDB:
+### 3. Встановити СУБД MariaDB:
 
 ```bash
 sudo apt-get update
