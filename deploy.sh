@@ -8,6 +8,8 @@ RESET="\033[0m"
 # Змінні для конфігурації
 REPO_URL="https://github.com/kshypachov/rest-sync-service-node-express-js.git"
 PROJECT_DIR="rest-sync-service-node-express-js"
+SERVICE_NAME="rest-sync-service-node-express-js"
+
 DB_USER="node_user"
 DB_PASSWORD="node_password"
 DB_NAME="node_serv_name"
@@ -79,7 +81,7 @@ npx sequelize db:migrate
  
 # Створення unit файлу для systemd
 echo -e "${GREEN}Створення unit файлу для systemd...${RESET}"
-sudo bash -c "cat > /etc/systemd/system/rest-sync-service-node-express-js.service" << EOL
+sudo bash -c "cat > /etc/systemd/system/$SERVICE_NAME.service" << EOL
 [Unit]
 Description=Node.js RESTful API Service
 After=network.target
@@ -99,7 +101,7 @@ EOL
 # Перезапуск systemd та запуск сервісу
 echo -e "${GREEN}Перезапуск systemd та запуск сервісу...${RESET}"
 sudo systemctl daemon-reload
-sudo systemctl start rest-sync-service-node-express-js
-sudo systemctl enable rest-sync-service-node-express-js
+sudo systemctl start $SERVICE_NAME
+sudo systemctl enable $SERVICE_NAME
  
-echo -e "${GREEN}Встановлення завершено! Сервіс ${RED} rest-sync-service-node-express-js${GREEN} запущено та додано в автозапуск.${RESET}"
+echo -e "${GREEN}Встановлення завершено! Сервіс ${RED} $SERVICE_NAME ${GREEN} запущено та додано в автозапуск.${RESET}"
